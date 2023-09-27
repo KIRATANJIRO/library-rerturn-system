@@ -1,0 +1,110 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+// Book class to represent individual books
+class Book {
+public:
+    Book(int id, const std::string& title) : id(id), title(title), checkedOut(false) {}
+
+    int getId() const {
+        return id;
+    }
+
+    const std::string& getTitle() const {
+        return title;
+    }
+
+    bool isCheckedOut() const {
+        return checkedOut;
+    }
+
+    void checkOut() {
+        checkedOut = true;
+    }
+
+    void returnBook() {
+        checkedOut = false;
+    }
+
+private:
+    int id;
+    std::string title;
+    bool checkedOut;
+};
+
+// Library class to manage the library catalog
+class Library {
+public:
+    // Add a book to the library catalog
+    void addBook(const Book& book) {
+        catalog.push_back(book);
+    }
+
+    // Remove a book from the library catalog by ID
+    void removeBook(int bookId) {
+        for (auto it = catalog.begin(); it != catalog.end(); ++it) {
+            if (it->getId() == bookId) {
+                catalog.erase(it);
+                break;
+            }
+        }
+    }
+
+    // Find a book by ID in the library catalog
+    Book* findBookById(int bookId) {
+        for (auto& book : catalog) {
+            if (book.getId() == bookId) {
+                return &book;
+            }
+        }
+        return nullptr;
+    }
+
+    // Display the library catalog
+    void displayCatalog() {
+        std::cout << "Library Catalog:\n";
+        for (const auto& book : catalog) {
+            std::cout << "ID: " << book.getId() << ", Title: " << book.getTitle() << "\n";
+        }
+    }
+
+private:
+    std::vector<Book> catalog;
+};
+
+int main() {
+    Library library;
+
+    // Add some books to the library catalog
+    library.addBook(Book(1, "Java Programming"));
+    library.addBook(Book(2, "Data Structures and Algorithms"));
+    library.addBook(Book(3, "Introduction to Artificial Intelligence"));
+
+    while (true) {
+        std::cout << "Enter book ID to return (0 to exit): ";
+        int bookId;
+        std::cin >> bookId;
+
+        if (bookId == 0) {
+            break;
+        }
+
+        Book* book = library.findBookById(bookId);
+
+        if (book != nullptr) {
+            if (book->isCheckedOut()) {
+                book->returnBook();
+                std::cout << "Book returned successfully.\n";
+            } else {
+                std::cout << "This book is not checked out.\n";
+            }
+        } else {
+            std::cout << "Book not found in the catalog.\n";
+        }
+
+        library.displayCatalog();
+    }
+
+    return 0;
+}
